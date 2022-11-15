@@ -4,13 +4,13 @@ import { forwardRef, ForwardRefRenderFunction } from 'react'
 
 import { FieldError } from 'react-hook-form'
 
-interface BaseTextProps extends TextInputProps {
+interface BaseDateProps extends TextInputProps {
   name: string
   label?: string
   error?: FieldError
 }
 
-const BaseText: ForwardRefRenderFunction<HTMLInputElement, BaseTextProps> = (
+const BaseDate: ForwardRefRenderFunction<HTMLInputElement, BaseDateProps> = (
   { name, label, error, ...rest },
   ref
 ) => {
@@ -22,6 +22,7 @@ const BaseText: ForwardRefRenderFunction<HTMLInputElement, BaseTextProps> = (
         ref={ref}
         id={name}
         name={name}
+        type="date"
         {...rest}
         sx={{ width: '100%' }}
       />
@@ -33,6 +34,6 @@ const BaseText: ForwardRefRenderFunction<HTMLInputElement, BaseTextProps> = (
   )
 }
 
-const Text = forwardRef(BaseText)
+const Date = forwardRef(BaseDate)
 
-export { Text }
+export { Date }

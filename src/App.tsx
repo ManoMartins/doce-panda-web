@@ -1,9 +1,10 @@
 import { ThemeProvider } from '@primer/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import HomePage from './pages/home'
 
 import GlobalStyle from './styles/global-styles'
 
+import { useRoutes } from 'react-router-dom'
+import routes from '~react-pages'
 export const queryClient = new QueryClient()
 
 function App() {
@@ -12,9 +13,7 @@ function App() {
       <ThemeProvider>
         <GlobalStyle />
 
-        <div className="App">
-          <HomePage />
-        </div>
+        <div className="App">{useRoutes(routes)}</div>
       </ThemeProvider>
     </QueryClientProvider>
   )

@@ -1,16 +1,20 @@
 import { Box, Button, Heading, Link, Text } from '@primer/react'
 
+import { useNavigate } from 'react-router-dom'
+
 import { useCallback } from 'react'
-import Form from 'components/form'
-import { useCreateCustomer } from 'features/customer'
+import Form from '../../../../components/form'
+import { useCreateCustomer } from '../../../../features/customer'
 
 interface FormData {
   email: string
   password: string
 }
 
-export function SignUp() {
+export function SignIn() {
   const { mutateAsync } = useCreateCustomer()
+
+  const navigate = useNavigate()
 
   const onSubmit = useCallback(async (data: FormData) => {
     await mutateAsync(data)
@@ -49,6 +53,7 @@ export function SignUp() {
           <Button
             type="submit"
             variant="primary"
+            onClick={() => navigate('/')}
             sx={{
               width: '100%',
             }}
@@ -67,7 +72,7 @@ export function SignUp() {
         fontSize="1"
       >
         <Text as="p" textAlign="center" letterSpacing="-0.025em">
-          Novo em doce panda ? <Link href="/signup">Criar uma conta</Link>.
+          Novo em doce panda ? <Link href="/sign-up">Criar uma conta</Link>.
         </Text>
       </Box>
     </Box>
