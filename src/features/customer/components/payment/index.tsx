@@ -10,12 +10,17 @@ import {
 } from '@primer/react'
 import { PageLayout } from '../page-layout'
 
-import { RiVisaLine, RiMastercardFill } from 'react-icons/ri'
+import { RiVisaLine } from 'react-icons/ri'
 import { CreateCardPayment } from '../create-card-payment'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
+import { useListCreditCards } from '@features/customer/queries/use-list-credit-cards'
+import { useDeleteCreditCard } from '@features/customer/mutations/use-delete-credit-card'
 
 export function Payment() {
   const [isOpen, setIsOpen] = useState(false)
+
+  const deleteCreditCard = useDeleteCreditCard()
+  const listCreditCards = useListCreditCards()
 
   const handleOpen = () => {
     setIsOpen(true)
@@ -24,6 +29,14 @@ export function Payment() {
   const handleClose = () => {
     setIsOpen(false)
   }
+
+  const handleDelete = useCallback(async (creditCardId: string) => {
+    try {
+      await deleteCreditCard.mutateAsync({ creditCardId })
+    } catch (err) {
+      console.log(err)
+    }
+  }, [])
 
   return (
     <PageLayout>
@@ -58,60 +71,33 @@ export function Payment() {
             borderColor: 'border.default',
           }}
         >
-          <Box p={3} display="flex" justifyContent="space-between">
-            <Box display="flex" alignItems="center">
-              <RiVisaLine size={32} />
+          {listCreditCards.data?.map((creditCard) => (
+            <Box
+              key={creditCard.id}
+              p={3}
+              display="flex"
+              justifyContent="space-between"
+            >
+              <Box display="flex" alignItems="center">
+                <RiVisaLine size={32} />
 
-              <Box display="flex" alignItems="flex-end">
-                <Text ml={3} fontSize={1} color="fg.subtle">
-                  Terminado com o número 1234
-                </Text>
+                <Box display="flex" alignItems="flex-end">
+                  <Text ml={3} fontSize={1} color="fg.subtle">
+                    Terminado com o número {creditCard.cardLastNumber}
+                  </Text>
+                </Box>
+              </Box>
+
+              <Box>
+                <IconButton
+                  icon={TrashIcon}
+                  sx={{ color: 'danger.fg' }}
+                  variant="invisible"
+                  onClick={() => handleDelete(creditCard.id)}
+                />
               </Box>
             </Box>
-
-            <Box>
-              <IconButton
-                icon={TrashIcon}
-                sx={{ color: 'danger.fg' }}
-                variant="invisible"
-                onClick={() =>
-                  alert('Adicionar dialog para confirmar o delete')
-                }
-              />
-            </Box>
-          </Box>
-
-          <Box
-            p={3}
-            display="flex"
-            justifyContent="space-between"
-            sx={{
-              borderTopWidth: 1,
-              borderTopStyle: 'solid',
-              borderTopColor: 'border.default',
-            }}
-          >
-            <Box display="flex" alignItems="center">
-              <RiMastercardFill size={24} />
-
-              <Box display="flex" alignItems="flex-end">
-                <Text ml={3} fontSize={1} color="fg.subtle">
-                  Terminado com o número 1234
-                </Text>
-              </Box>
-            </Box>
-
-            <Box>
-              <IconButton
-                icon={TrashIcon}
-                sx={{ color: 'danger.fg' }}
-                variant="invisible"
-                onClick={() =>
-                  alert('Adicionar dialog para confirmar o delete')
-                }
-              />
-            </Box>
-          </Box>
+          ))}
         </Box>
       </PrimerPageLayout.Content>
     </PageLayout>

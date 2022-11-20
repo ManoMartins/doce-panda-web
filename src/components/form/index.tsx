@@ -1,28 +1,32 @@
 import { Box, BoxProps } from '@primer/react'
 import { Children, ReactNode, cloneElement, isValidElement } from 'react'
 
-import { FieldValues, useForm } from 'react-hook-form'
+import { FieldValues, UseFormReturn } from 'react-hook-form'
 
-import { Text, Date } from './field'
-import { Footer } from './footer'
+import { Text, Date, Number } from './field'
 
-type FormProps<T> = Omit<BoxProps, 'onSubmit' | 'children'> & {
+type FormProps<T extends FieldValues> = Omit<
+  BoxProps,
+  'onSubmit' | 'children'
+> & {
   children: ReactNode
   defaultValues?: any
   onSubmit: (data: T) => void
+  methods: UseFormReturn<any, any>
 }
 
 function Form<T extends FieldValues>({
   children,
   defaultValues,
   onSubmit,
+  methods,
   ...rest
 }: FormProps<T>) {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<T>({ defaultValues })
+  } = methods
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -32,7 +36,6 @@ function Form<T extends FieldValues>({
             return child
           }
 
-          // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
           if (child.props.name) {
             return cloneElement(child, {
               ...child.props,
@@ -49,13 +52,6 @@ function Form<T extends FieldValues>({
             })
           }
 
-          if (child.type.displayName === 'Footer') {
-            return cloneElement(child, {
-              ...child.props,
-              isLoading: isSubmitting,
-            })
-          }
-
           return child
         })}
       </Box>
@@ -65,6 +61,6 @@ function Form<T extends FieldValues>({
 
 Form.Text = Text
 Form.Date = Date
-Form.Footer = Footer
+Form.Number = Number
 
 export default Form

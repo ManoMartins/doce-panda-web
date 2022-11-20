@@ -9,7 +9,8 @@
         "plugin:primer-react/recommended",
         "plugin:prettier/recommended",
         "prettier/prettier",
-        "prettier"
+        "prettier",
+        "plugin:react-hooks/recommended"
     ],
     "overrides": [
     ],
@@ -19,9 +20,17 @@
       "sourceType": "module"
     },
     "plugins": [
-        "react"
+        "react",
+        "react-hooks"
     ],
     "rules": {
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn",
+      "@typescript-eslint/restrict-plus-operands": "off",
+      "@typescript-eslint/consistent-type-assertions": "off",
+      "@typescript-eslint/promise-function-async" : "off",
+      "@typescript-eslint/no-floating-promises": "off",
+      "@typescript-eslint/strict-boolean-expressions": "off",
       "no-use-before-define": "off",
       "@typescript-eslint/no-use-before-define": ["error"],
       "@typescript-eslint/explicit-function-return-type": "off",

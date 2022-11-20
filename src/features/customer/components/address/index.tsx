@@ -9,12 +9,17 @@ import {
   IconButton,
   PageLayout as PrimerPageLayout,
 } from '@primer/react'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { CreateAddress } from '../create-address'
 import { PageLayout } from '../page-layout'
+import { useListAddresses } from '@features/customer/queries/use-list-addresses'
+import { useDeleteAddress } from '@features/customer/mutations/use-delete-address'
 
 export function Address() {
   const [isOpen, setIsOpen] = useState(false)
+
+  const deleteAddress = useDeleteAddress()
+  const listAddresses = useListAddresses()
 
   const handleOpen = () => {
     setIsOpen(true)
@@ -23,6 +28,14 @@ export function Address() {
   const handleClose = () => {
     setIsOpen(false)
   }
+
+  const handleDelete = useCallback(async (addressId: string) => {
+    try {
+      await deleteAddress.mutateAsync({ addressId })
+    } catch (err) {
+      console.log(err)
+    }
+  }, [])
 
   return (
     <PageLayout>
@@ -57,63 +70,39 @@ export function Address() {
             borderColor: 'border.default',
           }}
         >
-          <Box p={3} display="flex" justifyContent="space-between">
-            <Box>
-              <Box display="flex" alignItems="center">
-                <Heading as="h4" sx={{ fontSize: 2 }}>
-                  Casa
-                </Heading>
-                <Label variant="success" size="small" sx={{ ml: 2 }}>
-                  Principal
-                </Label>
+          {listAddresses.data?.map((address) => (
+            <Box
+              key={address.id}
+              p={3}
+              display="flex"
+              justifyContent="space-between"
+            >
+              <Box>
+                <Box display="flex" alignItems="center">
+                  <Heading as="h4" sx={{ fontSize: 2 }}>
+                    Casa
+                  </Heading>
+                  {address.isMain && (
+                    <Label variant="success" size="small" sx={{ ml: 2 }}>
+                      Principal
+                    </Label>
+                  )}
+                </Box>
+                <Text color="fg.muted" fontSize={1}>
+                  {address.street} {address.number}
+                </Text>
               </Box>
-              <Text color="fg.muted" fontSize={1}>
-                Rua bandeirantes 1140
-              </Text>
-            </Box>
 
-            <Box>
-              <IconButton
-                icon={TrashIcon}
-                sx={{ color: 'danger.fg' }}
-                variant="invisible"
-                onClick={() =>
-                  alert('Adicionar dialog para confirmar o delete')
-                }
-              />
-            </Box>
-          </Box>
-
-          <Box
-            p={3}
-            display="flex"
-            justifyContent="space-between"
-            borderTopWidth={1}
-            borderTopStyle="solid"
-            borderTopColor="border.default"
-          >
-            <Box>
-              <Box display="flex" alignItems="center">
-                <Heading as="h4" sx={{ fontSize: 2 }}>
-                  Casa
-                </Heading>
+              <Box>
+                <IconButton
+                  icon={TrashIcon}
+                  sx={{ color: 'danger.fg' }}
+                  variant="invisible"
+                  onClick={() => handleDelete(address.id)}
+                />
               </Box>
-              <Text color="fg.muted" fontSize={1}>
-                Rua bandeirantes 1140
-              </Text>
             </Box>
-
-            <Box>
-              <IconButton
-                icon={TrashIcon}
-                sx={{ color: 'danger.fg' }}
-                variant="invisible"
-                onClick={() =>
-                  alert('Adicionar dialog para confirmar o delete')
-                }
-              />
-            </Box>
-          </Box>
+          ))}
         </Box>
       </PrimerPageLayout.Content>
     </PageLayout>

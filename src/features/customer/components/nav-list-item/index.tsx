@@ -1,5 +1,6 @@
 import { NavList } from '@primer/react'
 import { useLocation } from 'react-router'
+import { Link } from 'react-router-dom'
 
 interface NavListItemProps {
   href: string
@@ -12,7 +13,7 @@ export function NavListItem({ href, label }: NavListItemProps) {
   const current = location.pathname === href && 'page'
 
   return (
-    <NavList.Item href={href} aria-current={current}>
+    <NavList.Item as={Link} to={href} aria-current={current}>
       {label}
     </NavList.Item>
   )

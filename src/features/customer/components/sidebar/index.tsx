@@ -1,7 +1,11 @@
 import { NavList, PageLayout } from '@primer/react'
 import { NavListItem } from '../nav-list-item'
+import { useAuth } from '@contexts/use-auth'
+import { Link } from 'react-router-dom'
 
 export function Sidebar() {
+  const { logout } = useAuth()
+
   return (
     <PageLayout.Pane position="start">
       <NavList>
@@ -13,7 +17,7 @@ export function Sidebar() {
 
         <NavList.Divider />
 
-        <NavList.Item onClick={() => alert('Deslogar o usuário')}>
+        <NavList.Item as={Link} to="/sign-in" onClick={() => logout()}>
           Sair da conta
         </NavList.Item>
       </NavList>

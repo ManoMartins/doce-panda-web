@@ -1,80 +1,90 @@
-import { Box, Button, Heading, Link, Text } from '@primer/react'
-
+import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import { useCallback, useEffect } from 'react'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { Box, Button, Flash, Heading } from '@primer/react'
 
-import { useCallback } from 'react'
-import Form from '../../../../components/form'
-import { useCreateCustomer } from '../../../../features/customer'
+import { schema } from './schema'
+import Form from '@components/form'
+import { useError } from '@hooks/use-error'
+import { useCreateUser } from '@features/auth/service/use-create-user'
 
 interface FormData {
+  name: string
   email: string
+  gender: string
   password: string
+  phoneNumber: string
+  documentNumber: string
+  birthDate: string
 }
 
-export function SignIn() {
-  const { mutateAsync } = useCreateCustomer()
-
+export function SignUp() {
+  const { handleError } = useError()
+  const createUser = useCreateUser()
   const navigate = useNavigate()
 
+  const methods = useForm({ resolver: yupResolver(schema) })
+
   const onSubmit = useCallback(async (data: FormData) => {
-    await mutateAsync(data)
+    await createUser.mutateAsync(data)
   }, [])
 
+  useEffect(() => {
+    if (createUser.isSuccess) {
+      navigate('/sign-up')
+    }
+  }, [createUser.isSuccess])
+
   return (
-    <Box width="19.25rem" mx="auto">
-      <Box display="flex" flexDirection="column" alignItems="center">
-        <Box
-          mt="5"
-          mb="4"
-          width="48px"
-          height="48px"
-          borderRadius="50%"
-          bg="canvas.subtle"
-        />
+    <Box mx="auto" maxWidth={588} mt={40}>
+      {createUser.isError && (
+        <Flash variant="danger">
+          {handleError(createUser.error).errorMessage}
+        </Flash>
+      )}
 
-        <Heading
-          sx={{
-            fontSize: 4,
-            textAlign: 'center',
-            fontWeight: 'normal',
-            letterSpacing: '-0.05em',
-          }}
-        >
-          Entrar em Doce Panda
-        </Heading>
-      </Box>
-
-      <Box mt="3" bg="canvas.subtle" p="3" borderRadius="2">
-        <Form onSubmit={onSubmit} sx={{ '> *': { mt: '3' } }}>
-          <Form.Text name="email" label="Email" type="email" />
-
-          <Form.Text name="password" label="Senha" type="password" />
-
-          <Button
-            type="submit"
-            variant="primary"
-            onClick={() => navigate('/')}
-            sx={{
-              width: '100%',
-            }}
-          >
-            Entrar
-          </Button>
-        </Form>
-      </Box>
-
-      <Box
-        mt="3"
-        px="3"
-        borderRadius="2"
-        border="1px solid"
-        borderColor="border.default"
-        fontSize="1"
+      <Heading
+        sx={{
+          fontSize: 4,
+          fontWeight: 'normal',
+          letterSpacing: '-0.05em',
+        }}
       >
-        <Text as="p" textAlign="center" letterSpacing="-0.025em">
-          Novo em doce panda ? <Link href="/sign-up">Criar uma conta</Link>.
-        </Text>
-      </Box>
+        Cadastro
+      </Heading>
+
+      <Form
+        methods={methods}
+        display="flex"
+        onSubmit={onSubmit}
+        flexDirection="column"
+        mb={5}
+        sx={{ '> *': { mt: '3' } }}
+      >
+        <Form.Text name="name" label="Nome" />
+
+        <Form.Text name="email" label="Email" type="email" />
+
+        <Form.Text name="password" label="Senha" />
+
+        <Form.Text name="phoneNumber" label="Telefone" />
+
+        <Form.Text name="documentNumber" label="CPF" />
+
+        <Form.Text name="gender" label="Gênero" />
+
+        <Form.Date name="birthDate" label="Data de nascimento" />
+
+        <Button
+          variant="primary"
+          type="submit"
+          size="large"
+          sx={{ width: '100%' }}
+        >
+          Criar cadastro
+        </Button>
+      </Form>
     </Box>
   )
 }

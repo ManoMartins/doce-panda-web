@@ -1,22 +1,31 @@
 import {
+  Button,
   Autocomplete,
   FormControl,
   Header as PrimerHeader,
-  IconButton,
 } from '@primer/react'
 import { FiShoppingCart } from 'react-icons/fi'
+import { useAuth } from '@contexts/use-auth'
+import { useCart } from '@contexts/use-cart'
+
+import { Link } from 'react-router-dom'
 
 export function Header() {
+  const { user, isLogged } = useAuth()
+  const { amount } = useCart()
+
   return (
     <PrimerHeader>
       <PrimerHeader.Item>
-        <PrimerHeader.Link href="/">
+        <PrimerHeader.Link as={Link} to="/">
           <span>Doce panda</span>
         </PrimerHeader.Link>
       </PrimerHeader.Item>
 
       <PrimerHeader.Item>
-        <PrimerHeader.Link href="/">Cardápio</PrimerHeader.Link>
+        <PrimerHeader.Link as={Link} to="/">
+          Cardápio
+        </PrimerHeader.Link>
       </PrimerHeader.Item>
 
       <PrimerHeader.Item full>
@@ -42,19 +51,23 @@ export function Header() {
       </PrimerHeader.Item>
 
       <PrimerHeader.Item>
-        <PrimerHeader.Link href="/profile">
-          Olá, Manoel Martins
-        </PrimerHeader.Link>
+        {isLogged && user ? (
+          <PrimerHeader.Link as={Link} to="/profile">
+            Olá, {user.name}
+          </PrimerHeader.Link>
+        ) : (
+          <PrimerHeader.Link as={Link} to="/sign-in">
+            Entrar
+          </PrimerHeader.Link>
+        )}
       </PrimerHeader.Item>
 
       <PrimerHeader.Item>
-        <PrimerHeader.Link href="/checkout">
-          <IconButton
+        <PrimerHeader.Link as={Link} to="/checkout">
+          <Button
             aria-label="Carrinho de compra"
-            icon={Icon}
+            leadingIcon={Icon}
             sx={{
-              width: 32,
-              height: 32,
               span: {
                 display: 'flex',
                 alignItems: 'center',
@@ -64,7 +77,9 @@ export function Header() {
                 filter: 'brightness(0.9)',
               },
             }}
-          />
+          >
+            {amount}
+          </Button>
         </PrimerHeader.Link>
       </PrimerHeader.Item>
     </PrimerHeader>

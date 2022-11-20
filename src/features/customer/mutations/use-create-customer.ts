@@ -1,12 +1,12 @@
 import { useMutation } from '@tanstack/react-query'
 import api from '../../../services/api'
 
-interface CreateCustomerResquest {
+interface CreateCustomerRequest {
   email: string
   password: string
 }
 
-async function createCustomer(data: CreateCustomerResquest) {
+async function createCustomer(data: CreateCustomerRequest) {
   await api.post('/users', data)
 }
 
