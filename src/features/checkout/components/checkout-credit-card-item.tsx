@@ -50,12 +50,14 @@ export function CheckoutCreditCardItem({
 
   useEffect(() => {
     setPriceFormatted(formatLocationCurrency(String(priceForCreditCard)))
-  }, [priceForCreditCard])
+  }, [priceForCreditCard, priceFormatted])
 
   return (
     <Box
       key={creditCard.id}
       sx={{
+        maxHeight: '32px',
+        minHeight: '32px',
         flex: 1,
         display: 'flex',
         alignItems: 'center',

@@ -13,7 +13,6 @@ export function useCreditCardItem(creditCardId: string) {
   let isLastSelected = false
   let isAlreadySelectedLimit = false
   let priceForCreditCard = 0
-  let canSelected = false
   let hasSelected = false
 
   if (order?.payments?.length > 0) {
@@ -33,7 +32,7 @@ export function useCreditCardItem(creditCardId: string) {
     hasSelected = order.payments.length > 0
   }
 
-  canSelected =
+  const canSelected =
     totalPrice / LIMIT_COULD_BE_SELECT_CREDIT_CARD >
     MINIMUM_VALUE_BY_CREDIT_CARD
 

@@ -1,14 +1,17 @@
 import { Box, FormControl, Radio, RadioGroup, Text } from '@primer/react'
 import { useListAddresses } from '@features/customer/queries/use-list-addresses'
+import { useCallback } from 'react'
+import { useOrder } from '@features/checkout/contexts/use-order'
 
-interface CheckoutDeliveryAddressProps {
-  handleChange: (selected: string | null) => void
-}
-
-export function CheckoutDeliveryAddress({
-  handleChange,
-}: CheckoutDeliveryAddressProps) {
+export function CheckoutDeliveryAddress() {
+  const { updateDeliveryAddress } = useOrder()
   const listAddresses = useListAddresses()
+
+  const handleOnChange = useCallback((selected: string | null) => {
+    if (!selected) return
+
+    updateDeliveryAddress(selected)
+  }, [])
 
   return (
     <>
@@ -27,7 +30,7 @@ export function CheckoutDeliveryAddress({
       <RadioGroup
         aria-labelledby="deliveryAddress"
         name="choiceGroup"
-        onChange={handleChange}
+        onChange={handleOnChange}
         sx={{ mb: 4 }}
       >
         {listAddresses.data ? (
@@ -42,7 +45,7 @@ export function CheckoutDeliveryAddress({
                 borderRadius: 2,
               }}
             >
-              <Radio value="one" />
+              <Radio value={address.id} />
 
               <FormControl.Label>
                 Rua bandeirantes 1140, Jardim Revista, Suzano - SP, CEP

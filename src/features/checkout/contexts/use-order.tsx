@@ -6,10 +6,11 @@ import {
   useEffect,
   useState,
 } from 'react'
-// import { realToCents } from '@utils/real-to-cents'
 import { useCart } from '@contexts/use-cart'
 import { formatLocationCurrency } from '@utils/format-currency'
 import { MINIMUM_VALUE_BY_CREDIT_CARD } from '../../../constants/credit-card'
+import { realToCents } from '@utils/real-to-cents'
+import { useMakeOrder } from '@features/checkout/mutations/use-make-order'
 
 interface Payment {
   paymentId: string
@@ -19,12 +20,17 @@ interface Payment {
 interface OrderData {
   orderItems: any[]
   payments: Payment[]
+  addressId: string
 }
 
 interface OrderContextValues {
   order: OrderData
+  updateDeliveryAddress: (addressId: string) => void
   updatePaymentMethod: (paymentMethodIds: string[]) => void
   updateValueToPay: (creditCardId: string, value: number) => void
+  makeOrder: () => Promise<void>
+  clearOrder: () => void
+  isPaying: boolean
 }
 
 interface OrderContextProviderProps {
@@ -34,8 +40,10 @@ interface OrderContextProviderProps {
 const OrderContext = createContext<OrderContextValues>({} as OrderContextValues)
 
 export function OrderContextProvider({ children }: OrderContextProviderProps) {
-  const { totalPrice, cartProducts } = useCart()
+  const { totalPrice, cartProducts, clearCart } = useCart()
   const [order, setOrder] = useState<OrderData>({} as OrderData)
+
+  const makeOrderApi = useMakeOrder()
 
   useEffect(() => {
     setOrder((oldState) => ({
@@ -58,7 +66,7 @@ export function OrderContextProvider({ children }: OrderContextProviderProps) {
 
       const paymentIds = paymentMethodIds.map((paymentMethodId) => ({
         paymentId: paymentMethodId,
-        totalInCents: totalPrice / paymentMethodIds.length,
+        totalInCents: realToCents(totalPrice) / paymentMethodIds.length,
       }))
 
       setOrder((oldState) => ({
@@ -82,19 +90,19 @@ export function OrderContextProvider({ children }: OrderContextProviderProps) {
         if (payment.paymentId === creditCardId) {
           return {
             ...payment,
-            totalInCents: amount,
+            totalInCents: realToCents(amount),
           }
         }
 
         return {
           ...payment,
-          totalInCents: totalPrice - amount,
+          totalInCents: realToCents(totalPrice - amount),
         }
       })
 
       const preTotalPrice = draft.reduce((a, b) => a + b.totalInCents, 0)
 
-      if (preTotalPrice !== totalPrice) {
+      if (realToCents(preTotalPrice) !== totalPrice) {
         throw new Error(
           `O valor deve ser menor do que R$ ${formatLocationCurrency(
             String(totalPrice)
@@ -110,12 +118,33 @@ export function OrderContextProvider({ children }: OrderContextProviderProps) {
     [order.payments, totalPrice]
   )
 
+  const updateDeliveryAddress = useCallback((addressId: string) => {
+    setOrder((oldState) => ({
+      ...oldState,
+      addressId,
+    }))
+  }, [])
+
+  const clearOrder = useCallback(() => {
+    setOrder({} as OrderData)
+  }, [])
+
+  const makeOrder = useCallback(async () => {
+    await makeOrderApi.mutateAsync(order)
+    clearOrder()
+    clearCart()
+  }, [clearCart, clearOrder, makeOrderApi, order])
+
   return (
     <OrderContext.Provider
       value={{
         order,
+        makeOrder,
+        clearOrder,
         updateValueToPay,
         updatePaymentMethod,
+        updateDeliveryAddress,
+        isPaying: makeOrderApi.isLoading,
       }}
     >
       {children}

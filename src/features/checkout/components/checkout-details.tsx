@@ -1,4 +1,4 @@
-import { Box, Button, Text } from '@primer/react'
+import { Box, Button, Spinner, Text } from '@primer/react'
 
 import { formatCurrency } from '@utils/format-currency'
 
@@ -6,10 +6,11 @@ import { useCart } from '@contexts/use-cart'
 
 interface CheckoutDetailsProps {
   onSubmit: () => void
+  isLoading: boolean
 }
 
-export function CheckoutDetails({ onSubmit }: CheckoutDetailsProps) {
-  const { subTotalPrice, cartProducts } = useCart()
+export function CheckoutDetails({ onSubmit, isLoading }: CheckoutDetailsProps) {
+  const { totalPrice, subTotalPrice, cartProducts } = useCart()
 
   return (
     <>
@@ -45,7 +46,7 @@ export function CheckoutDetails({ onSubmit }: CheckoutDetailsProps) {
         >
           <Text as="strong">Total</Text>
 
-          <Text>{formatCurrency(subTotalPrice + 5)}</Text>
+          <Text>{formatCurrency(totalPrice)}</Text>
         </Box>
       </Box>
 
@@ -55,7 +56,7 @@ export function CheckoutDetails({ onSubmit }: CheckoutDetailsProps) {
         onClick={onSubmit}
         sx={{ mt: 2, width: '100%' }}
       >
-        Finalizar pedido
+        {isLoading ? <Spinner size={'small'} /> : 'Finalizar pedido'}
       </Button>
     </>
   )

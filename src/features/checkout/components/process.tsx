@@ -7,22 +7,27 @@ import { CheckoutDetails } from '@features/checkout/components/checkout-details'
 import { CheckoutProducts } from '@features/checkout/components/checkout-products'
 import { CheckoutPaymentMethod } from '@features/checkout/components/checkout-payment-method'
 import { CheckoutDeliveryAddress } from '@features/checkout/components/checkout-delivery-address'
+import { useOrder } from '@features/checkout/contexts/use-order'
+import { useError } from '@hooks/use-error'
 
 export function Process() {
+  const { makeOrder, isPaying } = useOrder()
   const navigate = useNavigate()
+  const { handleError } = useError()
 
-  const handleChange = useCallback((selected: string | null) => {
-    console.log(selected)
-  }, [])
-
-  const onSubmit = useCallback(() => {
-    navigate('/thanks')
-  }, [])
+  const onSubmit = useCallback(async () => {
+    try {
+      await makeOrder()
+      navigate('/thanks')
+    } catch (err) {
+      alert(handleError(err).errorMessage)
+    }
+  }, [handleError, makeOrder, navigate])
 
   return (
     <PageLayout containerWidth="large">
       <PageLayout.Content>
-        <CheckoutDeliveryAddress handleChange={handleChange} />
+        <CheckoutDeliveryAddress />
 
         <CheckoutPaymentMethod />
 
@@ -32,7 +37,7 @@ export function Process() {
       </PageLayout.Content>
 
       <PageLayout.Pane>
-        <CheckoutDetails onSubmit={onSubmit} />
+        <CheckoutDetails onSubmit={onSubmit} isLoading={isPaying} />
       </PageLayout.Pane>
     </PageLayout>
   )

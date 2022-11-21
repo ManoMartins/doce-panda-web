@@ -18,6 +18,7 @@ interface CartContextValues {
   totalPrice: number
   subTotalPrice: number
   deliveryPrice: number
+  clearCart: () => void
   cartProducts: CartProduct[]
   addProduct: (product: ListProductResponse, quantity: number) => void
   removeProduct: (productId: string, quantity: number) => void
@@ -79,6 +80,10 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
     [cartProducts]
   )
 
+  const clearCart = useCallback(() => {
+    setCartProducts([])
+  }, [])
+
   return (
     <CartContext.Provider
       value={{
@@ -87,6 +92,7 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
         addProduct,
         cartProducts,
         removeProduct,
+        clearCart,
         deliveryPrice: 5,
         totalPrice: subTotalPrice + 5,
       }}

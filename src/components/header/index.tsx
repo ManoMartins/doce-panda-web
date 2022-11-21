@@ -78,7 +78,7 @@ export function Header() {
               },
             }}
           >
-            {amount}
+            <Button.Counter>{amount}</Button.Counter>
           </Button>
         </PrimerHeader.Link>
       </PrimerHeader.Item>
