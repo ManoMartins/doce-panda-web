@@ -84,7 +84,7 @@ export function OrderContextProvider({ children }: OrderContextProviderProps) {
           totalPrice - amount < MINIMUM_VALUE_BY_CREDIT_CARD ||
           amount < MINIMUM_VALUE_BY_CREDIT_CARD
         ) {
-          return payment
+          throw new Error(`O valor deve ser maior ou igual que R$ 10,00`)
         }
 
         if (payment.paymentId === creditCardId) {
@@ -102,7 +102,7 @@ export function OrderContextProvider({ children }: OrderContextProviderProps) {
 
       const preTotalPrice = draft.reduce((a, b) => a + b.totalInCents, 0)
 
-      if (realToCents(preTotalPrice) !== totalPrice) {
+      if (preTotalPrice !== realToCents(totalPrice)) {
         throw new Error(
           `O valor deve ser menor do que R$ ${formatLocationCurrency(
             String(totalPrice)

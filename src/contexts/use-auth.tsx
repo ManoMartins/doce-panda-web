@@ -72,7 +72,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     setUser(undefined)
     api.defaults.headers.common.Authorization = ''
     navigate('/sign-in')
-  }, [])
+  }, [navigate])
 
   const login = useCallback(
     async (input: InputSignIn) => {
@@ -98,7 +98,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         setIsLoading(false)
       }
     },
-    [navigate]
+    [handleError, navigate, saveTokenToStorage, saveUserToStorage]
   )
 
   useEffect(() => {

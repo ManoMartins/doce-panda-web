@@ -37,7 +37,7 @@ export function CreateAddress({ isOpen, onDismiss }: CreateAddressProps) {
         console.log(err)
       }
     },
-    [createAddress]
+    [createAddress, onDismiss]
   )
 
   return (

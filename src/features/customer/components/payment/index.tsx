@@ -30,13 +30,16 @@ export function Payment() {
     setIsOpen(false)
   }
 
-  const handleDelete = useCallback(async (creditCardId: string) => {
-    try {
-      await deleteCreditCard.mutateAsync({ creditCardId })
-    } catch (err) {
-      console.log(err)
-    }
-  }, [])
+  const handleDelete = useCallback(
+    async (creditCardId: string) => {
+      try {
+        await deleteCreditCard.mutateAsync({ creditCardId })
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    [deleteCreditCard]
+  )
 
   return (
     <PageLayout>

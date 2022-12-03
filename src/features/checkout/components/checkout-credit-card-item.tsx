@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { formatLocationCurrency } from '@utils/format-currency'
 import { useOrder } from '@features/checkout/contexts/use-order'
 import { useCreditCardItem } from '@features/checkout/hooks/use-credit-card-item'
+import { centsToReal } from '@utils/cents-to-real'
 
 interface CheckoutCreditCardItemProps {
   creditCard: ListCreditCardResponse
@@ -33,6 +34,9 @@ export function CheckoutCreditCardItem({
         updateValueToPay(creditCard.id, +event.target.value)
         setPriceFormatted(formatLocationCurrency(event.target.value))
       } catch (err) {
+        setPriceFormatted(
+          formatLocationCurrency(String(centsToReal(priceForCreditCard)))
+        )
         alert(err)
       }
     },
@@ -49,8 +53,10 @@ export function CheckoutCreditCardItem({
   )
 
   useEffect(() => {
-    setPriceFormatted(formatLocationCurrency(String(priceForCreditCard)))
-  }, [priceForCreditCard, priceFormatted])
+    setPriceFormatted(
+      formatLocationCurrency(String(centsToReal(priceForCreditCard)))
+    )
+  }, [priceForCreditCard])
 
   return (
     <Box

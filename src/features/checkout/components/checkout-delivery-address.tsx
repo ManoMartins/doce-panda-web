@@ -7,11 +7,14 @@ export function CheckoutDeliveryAddress() {
   const { updateDeliveryAddress } = useOrder()
   const listAddresses = useListAddresses()
 
-  const handleOnChange = useCallback((selected: string | null) => {
-    if (!selected) return
+  const handleOnChange = useCallback(
+    (selected: string | null) => {
+      if (!selected) return
 
-    updateDeliveryAddress(selected)
-  }, [])
+      updateDeliveryAddress(selected)
+    },
+    [updateDeliveryAddress]
+  )
 
   return (
     <>

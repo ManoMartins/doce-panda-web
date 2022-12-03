@@ -25,20 +25,23 @@ export function CreateCardPayment({
 
   const createCreditCard = useCreateCreditCard()
 
-  const onSubmit = useCallback(async (input: InputFormCreditCard) => {
-    try {
-      await createCreditCard.mutateAsync({
-        cardBrand: 'VISA',
-        cardSecurityCode: input.cvv,
-        cardHolder: input.cardNumber,
-        cardLastNumber: input.holderName,
-        cardExpirationDate: input.expirationDate,
-        cardIdentification: input.documentNumber,
-      })
-    } catch (err) {
-      console.log(err)
-    }
-  }, [])
+  const onSubmit = useCallback(
+    async (input: InputFormCreditCard) => {
+      try {
+        await createCreditCard.mutateAsync({
+          cardBrand: 'VISA',
+          cardSecurityCode: input.cvv,
+          cardHolder: input.cardNumber,
+          cardLastNumber: input.holderName,
+          cardExpirationDate: input.expirationDate,
+          cardIdentification: input.documentNumber,
+        })
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    [createCreditCard]
+  )
 
   return (
     <Dialog isOpen={isOpen} onDismiss={onDismiss} aria-labelledby="header-id">

@@ -28,7 +28,7 @@ export function Profile() {
   useEffect(() => {
     if (!user.data) return
     methods.reset(sanitizeUser(user.data))
-  }, [user.data])
+  }, [methods, user.data])
 
   return (
     <PageLayout>

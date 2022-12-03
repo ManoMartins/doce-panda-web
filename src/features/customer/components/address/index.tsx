@@ -29,13 +29,16 @@ export function Address() {
     setIsOpen(false)
   }
 
-  const handleDelete = useCallback(async (addressId: string) => {
-    try {
-      await deleteAddress.mutateAsync({ addressId })
-    } catch (err) {
-      console.log(err)
-    }
-  }, [])
+  const handleDelete = useCallback(
+    async (addressId: string) => {
+      try {
+        await deleteAddress.mutateAsync({ addressId })
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    [deleteAddress]
+  )
 
   return (
     <PageLayout>

@@ -26,15 +26,18 @@ export function SignUp() {
 
   const methods = useForm({ resolver: yupResolver(schema) })
 
-  const onSubmit = useCallback(async (data: FormData) => {
-    await createUser.mutateAsync(data)
-  }, [])
+  const onSubmit = useCallback(
+    async (data: FormData) => {
+      await createUser.mutateAsync(data)
+    },
+    [createUser]
+  )
 
   useEffect(() => {
     if (createUser.isSuccess) {
       navigate('/sign-up')
     }
-  }, [createUser.isSuccess])
+  }, [createUser.isSuccess, navigate])
 
   return (
     <Box mx="auto" maxWidth={588} mt={40}>
